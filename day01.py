@@ -38,7 +38,7 @@ def test_day1b():
 
 
 if __name__ == "__main__":
-    with open("./day1.txt", "r") as file:
+    with open("./day01.txt", "r") as file:
         data = file.read()
         print("Day 1a", day1a(data))
         print("Day 1b", day1b(data))
