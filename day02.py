@@ -3,23 +3,24 @@ B X
 C Z
 """
 
-VALUES = {"A": 0, "B": 1, "C": 2}
+VALUES = {"A": 0, "B": 1, "C": 2, "X": 0, "Y": 1, "Z": 2}
+WIN = 6
+DRAW = 3
+LOSE = 0
 
 
 def score_hand(opponent, me):
     mod_diff = (opponent - me) % 3
     if mod_diff == 0:
-        return me + 1 + 3
+        return me + 1 + DRAW
     if mod_diff == 1:
-        return me + 1
-    return me + 1 + 6
+        return me + 1 + LOSE
+    return me + 1 + WIN
 
 
 def day2a(input):
-    translation = str.maketrans("XYZ", "ABC")
     strategy = [
-        (VALUES[line[0]], VALUES[str.translate(line[2], translation)])
-        for line in input.strip().splitlines()
+        (VALUES[line[0]], VALUES[line[2]]) for line in input.strip().splitlines()
     ]
     return sum(score_hand(opponent, me) for opponent, me in strategy)
 
