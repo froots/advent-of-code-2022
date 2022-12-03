@@ -1,4 +1,4 @@
-input = """A Y
+example = """A Y
 B X
 C Z
 """
@@ -29,20 +29,20 @@ def score_hand_b(opponent, result):
     return score(opponent, me)
 
 
-def day2a(input):
-    return sum(score_hand_a(line[0], line[2]) for line in input.strip().splitlines())
+def day2a(strategy):
+    return sum(score_hand_a(line[0], line[2]) for line in strategy.strip().splitlines())
 
 
-def day2b(input):
-    return sum(score_hand_b(line[0], line[2]) for line in input.strip().splitlines())
+def day2b(strategy):
+    return sum(score_hand_b(line[0], line[2]) for line in strategy.strip().splitlines())
 
 
 def test_day2a():
-    assert day2a(input) == 15
+    assert day2a(example) == 15
 
 
 def test_day2b():
-    assert day2b(input) == 12
+    assert day2b(example) == 12
 
 
 def test_score_hand_a():
@@ -66,7 +66,7 @@ def test_score_hand_b():
 
 
 if __name__ == "__main__":
-    with open("./day02.txt", "r") as file:
+    with open("./day02.txt", "r", encoding="utf8") as file:
         data = file.read()
         print("Day 2a", day2a(data))
         print("Day 2b", day2b(data))
