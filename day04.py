@@ -66,9 +66,13 @@ def test_is_overlapping():
     assert is_overlapping((2, 6), (4, 8)) is True
 
 
-if __name__ == "__main__":
+def run():
     with open("day04.txt", "r", encoding="utf8") as file:
         data = file.read()
         print("Day 4a", day4a(data))
         print("Day 4b", day4b(data))
         file.close()
+
+
+if __name__ == "__main__":
+    run()

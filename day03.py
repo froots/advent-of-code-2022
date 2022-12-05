@@ -77,9 +77,13 @@ def test_priority():
     assert priority("L") == 38
 
 
-if __name__ == "__main__":
+def run():
     with open("day03.txt", "r", encoding="utf8") as file:
         data = file.read()
         print("Day 3a", day3a(data))
         print("Day 3b", day3b(data))
         file.close()
+
+
+if __name__ == "__main__":
+    run()
