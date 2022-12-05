@@ -35,9 +35,12 @@ def parse(data):
     return parse_stacks(stacks), parse_moves(moves)
 
 
-def arrange(stacks, move):
+def arrange(stacks, move, multi=False):
     count, origin, destination = move
-    to_move = stacks[origin - 1][-1 : -1 - count : -1]
+    if multi:
+        to_move = stacks[origin - 1][-count:]
+    else:
+        to_move = stacks[origin - 1][-1 : -1 - count : -1]
     to_remain = stacks[origin - 1][0:-count]
     stacks[destination - 1] += to_move
     stacks[origin - 1] = to_remain
@@ -49,6 +52,15 @@ def day5a(data):
 
     for move in moves:
         stacks = arrange(stacks, move)
+
+    return "".join(stack[-1] for stack in stacks)
+
+
+def day5b(data):
+    stacks, moves = parse(data)
+
+    for move in moves:
+        stacks = arrange(stacks, move, multi=True)
 
     return "".join(stack[-1] for stack in stacks)
 
@@ -67,8 +79,13 @@ def test_day5a():
     assert day5a(example) == "CMZ"
 
 
+def test_day5b():
+    assert day5b(example) == "MCD"
+
+
 if __name__ == "__main__":
     with open("day05.txt", "r", encoding="utf8") as file:
         data = file.read()
         print("Day 5a", day5a(data))
+        print("Day 5b", day5b(data))
         file.close()
