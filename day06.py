@@ -40,8 +40,8 @@ def test_day6b():
 def main():
     with open("day06.txt", "r", encoding="utf8") as file:
         data = file.read()
-    print("Day 6 part 1", day6a(data))
-    print("Day 6 part 2", day6b(data))
+    print("Day 6a", day6a(data))
+    print("Day 6b", day6b(data))
 
 
 if __name__ == "__main__":

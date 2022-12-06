@@ -65,13 +65,12 @@ def test_score_hand_b():
     assert score_hand_b("C", "Z") == 7
 
 
-def run():
+def main():
     with open("./day02.txt", "r", encoding="utf8") as file:
         data = file.read()
-        print("Day 2a", day2a(data))
-        print("Day 2b", day2b(data))
-        file.close()
+    print("Day 2a", day2a(data))
+    print("Day 2b", day2b(data))
 
 
 if __name__ == "__main__":
-    run()
+    main()

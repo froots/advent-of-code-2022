@@ -37,13 +37,12 @@ def test_day1b():
     assert day1b(input) == 45_000
 
 
-def run():
+def main():
     with open("./day01.txt", "r") as file:
         data = file.read()
-        print("Day 1a", day1a(data))
-        print("Day 1b", day1b(data))
-        file.close()
+    print("Day 1a", day1a(data))
+    print("Day 1b", day1b(data))
 
 
 if __name__ == "__main__":
-    run()
+    main()

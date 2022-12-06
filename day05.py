@@ -83,13 +83,12 @@ def test_day5b():
     assert day5b(example) == "MCD"
 
 
-def run():
+def main():
     with open("day05.txt", "r", encoding="utf8") as file:
         data = file.read()
-        print("Day 5a", day5a(data))
-        print("Day 5b", day5b(data))
-        file.close()
+    print("Day 5a", day5a(data))
+    print("Day 5b", day5b(data))
 
 
 if __name__ == "__main__":
-    run()
+    main()
