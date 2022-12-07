@@ -24,6 +24,10 @@ $ ls
 """
 
 
+TOTAL_CAPACITY = 70_000_000
+SPACE_REQUIRED_FOR_UPDATE = 30_000_000
+
+
 class Node:
     def __init__(self, name, size=0, parent=None):
         self.name = name
@@ -88,14 +92,33 @@ def day7a(data):
     )
 
 
+def day7b(data):
+    root, directories = process_input(data)
+    unused_space = TOTAL_CAPACITY - root.total_size
+
+    if unused_space > SPACE_REQUIRED_FOR_UPDATE:
+        raise ValueError(f"Already enough space for update: {unused_space}")
+
+    return min(
+        dir.total_size
+        for dir in directories
+        if dir.total_size >= SPACE_REQUIRED_FOR_UPDATE - unused_space
+    )
+
+
 def test_day7a():
     assert day7a(example) == 95437
+
+
+def test_day7b():
+    assert day7b(example) == 24933642
 
 
 def main():
     with open("day07.txt", "r", encoding="utf8") as file:
         data = file.read()
     print("Day 7a", day7a(data))
+    print("Day 7b", day7b(data))
 
 
 if __name__ == "__main__":
