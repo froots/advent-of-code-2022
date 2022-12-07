@@ -50,10 +50,10 @@ class Node:
         return f"<Node {self.name} {self.size}>"
 
 
-def day7a(data):
+def process_input(data):
     root = Node("/")
-    pointer = root
     directories = []
+    pointer = root
 
     for line in data.strip().splitlines():
         if line == "$ ls":
@@ -76,6 +76,12 @@ def day7a(data):
         size, name = line.strip().split(" ")
         pointer.add(Node(name, size=int(size), parent=pointer))
         pointer.add_size(int(size))
+
+    return root, directories
+
+
+def day7a(data):
+    __, directories = process_input(data)
 
     return sum(
         dir.total_size if dir.total_size <= 100_000 else 0 for dir in directories
