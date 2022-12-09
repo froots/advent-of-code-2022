@@ -28,9 +28,7 @@ def get_sightlines(x, y, grid, breadth, depth):
 
 
 def is_visible(x, y, grid, breadth, depth):
-    on_edge = x == 0 or y == 0 or x == breadth - 1 or y == depth - 1
-
-    if on_edge:
+    if x == 0 or y == 0 or x == breadth - 1 or y == depth - 1:
         return True
 
     sightlines = get_sightlines(x, y, grid, breadth, depth)
@@ -38,6 +36,22 @@ def is_visible(x, y, grid, breadth, depth):
     return any(
         max(h for _, _, h in sightline) < grid[(x, y)] for sightline in sightlines
     )
+
+
+def scenic_score(x, y, grid, breadth, depth):
+    sightlines = get_sightlines(x, y, grid, breadth, depth)
+    height = grid[(x, y)]
+    score = 1
+
+    for sightline in sightlines:
+        if len(sightline) == 0:
+            return 0
+        for no_trees, (sx, sy, h) in enumerate(sightline, 1):
+            if h >= height or no_trees == len(sightline):
+                score *= no_trees
+                break
+
+    return score
 
 
 def day8a(data):
@@ -53,8 +67,18 @@ def day8a(data):
     return len(visible)
 
 
+def day8b(data):
+    grid, breadth, depth = parse(data)
+
+    return max(scenic_score(x, y, grid, breadth, depth) for (x, y), _ in grid.items())
+
+
 def test_day8a():
     assert day8a(example) == 21
+
+
+def test_day8b():
+    assert day8b(example) == 8
 
 
 def test_is_visible():
@@ -64,10 +88,19 @@ def test_is_visible():
     assert is_visible(3, 1, grid, breadth, depth) is False
 
 
+def test_scenic_score():
+    grid, breadth, depth = parse(example)
+
+    assert scenic_score(0, 0, grid, breadth, depth) == 0
+    assert scenic_score(2, 1, grid, breadth, depth) == 4
+    assert scenic_score(2, 3, grid, breadth, depth) == 8
+
+
 def main():
     with open("day08.txt", "r", encoding="utf8") as file:
         data = file.read()
     print("Day 8a", day8a(data))
+    print("Day 8b", day8b(data))
 
 
 if __name__ == "__main__":
