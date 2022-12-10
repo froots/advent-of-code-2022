@@ -26,7 +26,7 @@ def move_command(direction, distance, head, tails):
     dx, dy = DIRECTIONS[direction]
     hx, hy = head
     # For range of head moves
-    for d in range(distance):
+    for _ in range(distance):
         # move head one
         hx += dx
         hy += dy
