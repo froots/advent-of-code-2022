@@ -21,27 +21,6 @@ U 20
 DIRECTIONS = {"U": (0, 1), "R": (1, 0), "D": (0, -1), "L": (-1, 0)}
 
 
-def move_tail(tail, head):
-    tx, ty = tail
-    hx, hy = head
-
-    locations = set()
-
-    while max(abs(hx - tx), abs(hy - ty)) > 1:
-        dx = hx - tx
-        dy = hy - ty
-
-        if dx != 0:
-            tx += dx // abs(dx)
-
-        if dy != 0:
-            ty += dy // abs(dy)
-
-        locations.add((tx, ty))
-
-    return (tx, ty), locations
-
-
 def move_command(direction, distance, head, tails):
     locations = set()
     dx, dy = DIRECTIONS[direction]
