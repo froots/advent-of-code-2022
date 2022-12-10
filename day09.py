@@ -11,12 +11,6 @@ R 2
 DIRECTIONS = {"U": (0, 1), "R": (1, 0), "D": (0, -1), "L": (-1, 0)}
 
 
-def move_head(current, direction, distance):
-    x, y = current
-    dx, dy = DIRECTIONS[direction]
-    return (x + dx * distance, y + dy * distance)
-
-
 def move_tail(tail, head):
     tx, ty = tail
     hx, hy = head
@@ -38,40 +32,61 @@ def move_tail(tail, head):
     return (tx, ty), locations
 
 
+def move_command(direction, distance, head, tails):
+    locations = set()
+    dx, dy = DIRECTIONS[direction]
+    hx, hy = head
+    # For range of head moves
+    for d in range(distance):
+        # move head one
+        hx += dx
+        hy += dy
+        head = (hx, hy)
+
+        # move each tail according to the head / tail in front
+        for t, (tx, ty) in enumerate(tails):
+            leader = head if t == 0 else tails[t - 1]
+            lx, ly = leader
+
+            # Only move if planck distance to leader > 1
+            if max(abs(lx - tx), abs(ly - ty)) > 1:
+                tx += (lx - tx) // (abs(lx - tx) or 1)
+                ty += (ly - ty) // (abs(ly - ty) or 1)
+                tails[t] = (tx, ty)
+                if t == len(tails) - 1:
+                    locations.add((tx, ty))
+
+    return (hx, hy), tails, locations
+
+
 def day9a(data):
     head = (0, 0)
-    tail = (0, 0)
-    tail_locations = set([tail])
+    tails = [(0, 0)]
 
-    # for each command
+    last_tail_locations = set(tails[-1])
+
     for line in data.strip().splitlines():
-        direction = line[0]
-        distance = int(line[2:])
+        head, tails, locations = move_command(line[0], int(line[2:]), head, tails)
 
-        head = move_head(head, direction, distance)
-        tail, locations = move_tail(tail, head)
-        tail_locations |= locations
+        last_tail_locations |= locations
 
-    # return the number of locations
-    return len(tail_locations)
+    return len(last_tail_locations)
 
 
 def test_day9a():
     assert day9a(example) == 13
 
 
-def test_move_tail():
-    assert move_tail((1, 1), (1, 1))[0] == (1, 1)  # Stays when in same location
-    assert move_tail((1, 1), (2, 1))[0] == (1, 1)  # Stays when 1 away
-    assert move_tail((1, 1), (1, 2))[0] == (1, 1)  # Stays when 1 away
-    assert move_tail((1, 1), (2, 2))[0] == (1, 1)  # Stays when 1 away diagonally
+def test_move_command_with_one_tail():
+    head = (0, 0)
+    tails = [(0, 0)]
 
-    assert move_tail((1, 1), (3, 1))[0] == (2, 1)  # Moves to be one away
-    assert move_tail((1, 1), (4, 1))[0] == (3, 1)  # Moves to be one away
-    assert move_tail((5, 5), (5, 2))[0] == (5, 3)  # Moves to be one away
-
-    # Moves diagonally first, then within one
-    assert move_tail((3, 3), (6, 4))[0] == (5, 4)
+    head, tails, locations = move_command("U", 3, head, tails)
+    assert head == (0, 3)
+    assert tails[0] == (0, 2)
+    assert len(locations) == 2
+    assert (0, 1) in locations
+    assert (0, 2) in locations
 
 
 def main():
