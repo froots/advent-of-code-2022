@@ -158,14 +158,14 @@ noop
 """
 
 
-def value_at(step, value_changes):
-    return [value for s, value in value_changes if s <= step][-1]
+def pos_after_cycle(cycle, log):
+    return [value for c, value in log if c <= cycle][-1]
 
 
-def day10a(data):
+def create_register_log(data):
     completed_cycles = 0
     register_x = 1
-    value_changes = [(0, 1)]
+    log = [(0, 1)]
 
     for cmd in data.strip().splitlines():
         if cmd == "noop":
@@ -173,11 +173,17 @@ def day10a(data):
             continue
         register_x += int(cmd[5:])
         completed_cycles += 2
-        value_changes.append((completed_cycles, register_x))
+        log.append((completed_cycles, register_x))
+
+    return log
+
+
+def day10a(data):
+    reg_x_log = create_register_log(data)
 
     return sum(
-        (step + 1) * value_at(step, value_changes)
-        for step in range(19, max(s for s, _ in value_changes), 40)
+        (cycle + 1) * pos_after_cycle(cycle, reg_x_log)
+        for cycle in range(19, max(c for c, _ in reg_x_log), 40)
     )
 
 
