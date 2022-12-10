@@ -1,9 +1,3 @@
-# Cycles of a clock circuit
-# Single register X with starting value 1
-# Two instructions:
-#   'addx V' - 2 cycles - after 2 cycles, X increased by value V
-#   'noop' - 1 cycle
-
 example1 = """noop
 addx 3
 addx -5
@@ -187,14 +181,38 @@ def day10a(data):
     )
 
 
+def day10b(data):
+    reg_x_log = create_register_log(data)
+
+    stream = [
+        "#" if abs((cycle % 40) - pos_after_cycle(cycle, reg_x_log)) <= 1 else "."
+        for cycle in range(240)
+    ]
+
+    return "\n".join("".join(stream[i : i + 40]) for i in range(0, len(stream), 40))
+
+
 def test_day10a():
     assert day10a(example2) == 13140
+
+
+def test_day10b():
+    expected = """##..##..##..##..##..##..##..##..##..##..
+###...###...###...###...###...###...###.
+####....####....####....####....####....
+#####.....#####.....#####.....#####.....
+######......######......######......####
+#######.......#######.......#######.....
+"""
+    assert day10b(example2).strip() == expected.strip()
 
 
 def main():
     with open("day10.txt", "r", encoding="utf8") as file:
         data = file.read()
     print("Day 10a", day10a(data))
+    print("Day 10b:")
+    print(day10b(data))
 
 
 if __name__ == "__main__":
