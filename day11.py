@@ -91,9 +91,11 @@ class Monkey:
         else:
             self.operand = int(operand)
 
-    def operate(self, worry):
+    def operate(self, worry, worry_management_factor=3, common_factor=None):
         operand = worry if self.operand == "old" else self.operand
-        return worry * operand if self.operation == "*" else worry + operand
+        new_worry = worry * operand if self.operation == "*" else worry + operand
+        new_worry //= worry_management_factor
+        return new_worry % common_factor if common_factor else new_worry
 
     def choose_monkey(self, worry):
         return (
@@ -102,10 +104,10 @@ class Monkey:
             else self.false_monkey
         )
 
-    def turn(self, worry_management_factor=3):
+    def turn(self, worry_management_factor=3, common_factor=None):
         items_thrown = []
         for item in self.items:
-            worry = self.operate(item) // worry_management_factor
+            worry = self.operate(item, worry_management_factor, common_factor)
             target_monkey = self.choose_monkey(worry)
             items_thrown.append((target_monkey, worry))
         self.inspect_count += len(self.items)
@@ -121,25 +123,46 @@ def pass_items(thrown_items, monkeys):
         monkeys.get(monkey_id).add_item(worry)
 
 
-def run_rounds(monkeys, rounds, worry_management_factor=3):
+def run_rounds(monkeys, rounds, worry_management_factor=3, common_factor=None):
     for _ in range(rounds):
         for monkey in monkeys.values():
-            pass_items(monkey.turn(worry_management_factor), monkeys)
+            pass_items(monkey.turn(worry_management_factor, common_factor), monkeys)
 
     return monkeys
+
+
+def monkey_business_level(monkeys):
+    most_active = sorted(monkey.inspect_count for monkey in monkeys.values())
+    return most_active[-1] * most_active[-2]
 
 
 def day11a(data):
     monkeys = Monkey.parse_many(data)
     monkeys = run_rounds(monkeys, 20)
 
-    most_active = sorted(monkey.inspect_count for monkey in monkeys.values())
+    return monkey_business_level(monkeys)
 
-    return most_active[-1] * most_active[-2]
+
+def day11b(data):
+    monkeys = Monkey.parse_many(data)
+    common_factor = 1
+
+    for monkey in monkeys.values():
+        common_factor *= monkey.divisibility_test
+
+    monkeys = run_rounds(
+        monkeys, 10000, worry_management_factor=1, common_factor=common_factor
+    )
+
+    return monkey_business_level(monkeys)
 
 
 def test_day11a():
     assert day11a(example) == 10605
+
+
+def test_day11b():
+    assert day11b(example) == 2713310158
 
 
 def test_parse_monkey():
@@ -222,6 +245,7 @@ def main():
     with open("day11.txt", "r", encoding="utf8") as file:
         data = file.read()
     print("Day 11a", day11a(data))
+    print("Day 11b", day11b(data))
 
 
 if __name__ == "__main__":
