@@ -102,10 +102,10 @@ class Monkey:
             else self.false_monkey
         )
 
-    def turn(self):
+    def turn(self, worry_management_factor=3):
         items_thrown = []
         for item in self.items:
-            worry = self.operate(item) // 3
+            worry = self.operate(item) // worry_management_factor
             target_monkey = self.choose_monkey(worry)
             items_thrown.append((target_monkey, worry))
         self.inspect_count += len(self.items)
@@ -121,10 +121,10 @@ def pass_items(thrown_items, monkeys):
         monkeys.get(monkey_id).add_item(worry)
 
 
-def run_rounds(monkeys, rounds):
+def run_rounds(monkeys, rounds, worry_management_factor=3):
     for _ in range(rounds):
         for monkey in monkeys.values():
-            pass_items(monkey.turn(), monkeys)
+            pass_items(monkey.turn(worry_management_factor), monkeys)
 
     return monkeys
 
