@@ -11,6 +11,14 @@ from collections import deque
 asc = string.ascii_lowercase
 
 
+def parse_map(data):
+    return {
+        (x, y): asc.index(h) if h in asc else h
+        for y, row in enumerate(data.strip().splitlines())
+        for x, h in enumerate(row)
+    }
+
+
 def get_h(h):
     if h == "S":
         return 0
@@ -28,18 +36,7 @@ def get_neighbours(hm, x, y):
     ]
 
 
-def day12a(data):
-    rows = data.strip().splitlines()
-
-    hm = {
-        (x, y): asc.index(h) if h in asc else h
-        for y, row in enumerate(rows)
-        for x, h in enumerate(row)
-    }
-
-    start = [coords for coords, h in hm.items() if h == "S"][0]
-    end = [coords for coords, h in hm.items() if h == "E"][0]
-
+def bfs(hm, start, end):
     sx, sy = start
 
     queue = deque([(0, sx, sy)])
@@ -59,6 +56,13 @@ def day12a(data):
                 queue.append((next_steps, nx, ny))
 
     return shortest_seen[end]
+
+
+def day12a(data):
+    hm = parse_map(data)
+    start = [coords for coords, h in hm.items() if h == "S"][0]
+    end = [coords for coords, h in hm.items() if h == "E"][0]
+    return bfs(hm, start, end)
 
 
 def test_day12a():
