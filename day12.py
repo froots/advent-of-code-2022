@@ -55,7 +55,7 @@ def bfs(hm, start, end):
                 shortest_seen[neighbour] = next_steps
                 queue.append((next_steps, nx, ny))
 
-    return shortest_seen[end]
+    return shortest_seen[end] if end in shortest_seen else None
 
 
 def day12a(data):
@@ -65,14 +65,28 @@ def day12a(data):
     return bfs(hm, start, end)
 
 
+def day12b(data):
+    hm = parse_map(data)
+    end = [coords for coords, h in hm.items() if h == "E"][0]
+    starts = [coords for coords, h in hm.items() if h == "S" or h == 0]
+
+    results = [bfs(hm, start, end) for start in starts]
+    return min(result for result in results if result is not None)
+
+
 def test_day12a():
     assert day12a(example) == 31
+
+
+def test_day12b():
+    assert day12b(example) == 29
 
 
 def main():
     with open("day12.txt", "r", encoding="utf8") as file:
         data = file.read()
     print("Day 12a", day12a(data))
+    print("Day 12b", day12b(data))
 
 
 if __name__ == "__main__":
