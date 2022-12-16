@@ -28,28 +28,6 @@ def get_neighbours(hm, x, y):
     ]
 
 
-def bfs(hm, start, end_test):
-    sx, sy = start
-
-    queue = deque([(0, sx, sy)])
-    shortest_seen = {start: 0}
-
-    while queue:
-        steps, next_x, next_y = queue.popleft()
-        next_steps = steps + 1
-
-        if end_test(next_x, next_y):
-            break
-
-        for neighbour in get_neighbours(hm, next_x, next_y):
-            nx, ny = neighbour
-            if neighbour not in shortest_seen or shortest_seen[neighbour] > next_steps:
-                shortest_seen[neighbour] = next_steps
-                queue.append((next_steps, nx, ny))
-
-    return shortest_seen
-
-
 def day12a(data):
     rows = data.strip().splitlines()
 
@@ -62,9 +40,25 @@ def day12a(data):
     start = [coords for coords, h in hm.items() if h == "S"][0]
     end = [coords for coords, h in hm.items() if h == "E"][0]
 
-    end_test = lambda x, y: (x, y) == end
+    sx, sy = start
 
-    return bfs(hm, start, end_test)[end]
+    queue = deque([(0, sx, sy)])
+    shortest_seen = {start: 0}
+
+    while queue:
+        steps, next_x, next_y = queue.popleft()
+        next_steps = steps + 1
+
+        if (next_x, next_y) == end:
+            break
+
+        for neighbour in get_neighbours(hm, next_x, next_y):
+            nx, ny = neighbour
+            if neighbour not in shortest_seen or shortest_seen[neighbour] > next_steps:
+                shortest_seen[neighbour] = next_steps
+                queue.append((next_steps, nx, ny))
+
+    return shortest_seen[end]
 
 
 def test_day12a():
