@@ -16,8 +16,6 @@ def parse_rocks(data):
             )
         )
 
-    print(node_pairs)
-
     for (node1, node2) in node_pairs:
         x1, y1 = node1
         x2, y2 = node2
@@ -31,16 +29,61 @@ def parse_rocks(data):
     return rocks
 
 
-def day14a(data):
-    # parse rock structure
-    # while abyss not been hit
-    # drop sand item until it comes to rest according to rules
-    # return number of rested sand items
-    pass
+def print_map(rocks, rested_sand=set()):
+    min_x = min(x for x, _ in rocks)
+    max_x = max(x for x, _ in rocks)
+    min_y = 0
+    max_y = max(y for _, y in rocks)
+
+    for y in range(min_y, max_y + 1):
+        row = ""
+        for x in range(min_x, max_x + 1):
+            if (x, y) in rocks:
+                row += "#"
+            elif (x, y) in rested_sand:
+                row += "O"
+            else:
+                row += "."
+
+        print("".join(row))
+    print("")
 
 
-# def test_day14a():
-#     assert day14a(example) == 24
+def day14a(data, visualise=False):
+    rocks = parse_rocks(data)
+    if visualise:
+        print_map(rocks)
+    max_y = max(y for x, y in rocks)
+    rested_sand = set()
+    current = (500, 0)
+
+    while current[1] <= max_y:
+        x, y = current
+        solids = rocks | rested_sand
+
+        if (x, y + 1) not in solids:
+            current = (x, y + 1)
+            continue
+
+        if (x - 1, y + 1) not in solids:
+            current = (x - 1, y + 1)
+            continue
+
+        if (x + 1, y + 1) not in solids:
+            current = (x + 1, y + 1)
+            continue
+
+        rested_sand.add(current)
+        current = (500, 0)
+
+    if visualise:
+        print_map(rocks, rested_sand)
+
+    return len(rested_sand)
+
+
+def test_day14a():
+    assert day14a(example) == 24
 
 
 def test_parse_rocks():
@@ -70,3 +113,13 @@ def test_parse_rocks():
         ]
     )
     assert len(rocks) == len(expected)
+
+
+def main():
+    with open("day14.txt", "r", encoding="utf8") as file:
+        data = file.read()
+    print("Day 14a", day14a(data, visualise=True))
+
+
+if __name__ == "__main__":
+    main()
