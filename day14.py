@@ -29,7 +29,7 @@ def parse_rocks(data):
     return rocks
 
 
-def day14a(data, visualise=False):
+def day14a(data):
     rocks = parse_rocks(data)
     max_y = max(y for x, y in rocks)
     rested = 0
@@ -60,48 +60,51 @@ def day14a(data, visualise=False):
     return rested
 
 
-def day14b(data, visualise=False):
+def day14b(data):
     rocks = parse_rocks(data)
     max_y = max(y for _, y in rocks)
     floor = max_y + 2
-    rested_sand = set()
-    current = (500, 0)
+    rested = 0
+    x, y = (500, 0)
 
-    while (500, 0) not in rested_sand:
-        x, y = current
-        solids = rocks | rested_sand
-
+    while True:
         if (y + 1) == floor:
-            rested_sand.add(current)
-            print(current)
-            current = (500, 0)
+            rested += 1
+            rocks.add((x, y))
+            x, y = (500, 0)
             continue
 
-        if (x, y + 1) not in solids:
-            current = (x, y + 1)
+        if (x, y + 1) not in rocks:
+            y += 1
             continue
 
-        if (x - 1, y + 1) not in solids:
-            current = (x - 1, y + 1)
+        if (x - 1, y + 1) not in rocks:
+            x -= 1
+            y += 1
             continue
 
-        if (x + 1, y + 1) not in solids:
-            current = (x + 1, y + 1)
+        if (x + 1, y + 1) not in rocks:
+            x += 1
+            y += 1
             continue
 
-        rested_sand.add(current)
-        print(current)
-        current = (500, 0)
+        if (x, y) == (500, 0):
+            rested += 1
+            break
 
-    return len(rested_sand)
+        rested += 1
+        rocks.add((x, y))
+        x, y = (500, 0)
+
+    return rested
 
 
 def test_day14a():
     assert day14a(example) == 24
 
 
-# def test_day14b():
-#     assert day14b(example) == 93
+def test_day14b():
+    assert day14b(example) == 93
 
 
 def test_parse_rocks():
@@ -136,8 +139,8 @@ def test_parse_rocks():
 def main():
     with open("day14.txt", "r", encoding="utf8") as file:
         data = file.read()
-    print("Day 14a", day14a(data, visualise=True))
-    # print("Day 14b", day14b(data, visualise=True))
+    print("Day 14a", day14a(data))
+    print("Day 14b", day14b(data))
 
 
 if __name__ == "__main__":
