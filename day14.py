@@ -29,37 +29,53 @@ def parse_rocks(data):
     return rocks
 
 
-def print_map(rocks, rested_sand=set()):
-    min_x = min(x for x, _ in rocks)
-    max_x = max(x for x, _ in rocks)
-    min_y = 0
-    max_y = max(y for _, y in rocks)
-
-    for y in range(min_y, max_y + 1):
-        row = ""
-        for x in range(min_x, max_x + 1):
-            if (x, y) in rocks:
-                row += "#"
-            elif (x, y) in rested_sand:
-                row += "O"
-            else:
-                row += "."
-
-        print("".join(row))
-    print("")
-
-
 def day14a(data, visualise=False):
     rocks = parse_rocks(data)
-    if visualise:
-        print_map(rocks)
     max_y = max(y for x, y in rocks)
+    rested = 0
+    x, y = (500, 0)
+
+    while True:
+        if y > max_y:
+            break
+
+        if (x, y + 1) not in rocks:
+            y += 1
+            continue
+
+        if (x - 1, y + 1) not in rocks:
+            x -= 1
+            y += 1
+            continue
+
+        if (x + 1, y + 1) not in rocks:
+            x += 1
+            y += 1
+            continue
+
+        rested += 1
+        rocks.add((x, y))
+        x, y = (500, 0)
+
+    return rested
+
+
+def day14b(data, visualise=False):
+    rocks = parse_rocks(data)
+    max_y = max(y for _, y in rocks)
+    floor = max_y + 2
     rested_sand = set()
     current = (500, 0)
 
-    while current[1] <= max_y:
+    while (500, 0) not in rested_sand:
         x, y = current
         solids = rocks | rested_sand
+
+        if (y + 1) == floor:
+            rested_sand.add(current)
+            print(current)
+            current = (500, 0)
+            continue
 
         if (x, y + 1) not in solids:
             current = (x, y + 1)
@@ -74,16 +90,18 @@ def day14a(data, visualise=False):
             continue
 
         rested_sand.add(current)
+        print(current)
         current = (500, 0)
-
-    if visualise:
-        print_map(rocks, rested_sand)
 
     return len(rested_sand)
 
 
 def test_day14a():
     assert day14a(example) == 24
+
+
+# def test_day14b():
+#     assert day14b(example) == 93
 
 
 def test_parse_rocks():
@@ -119,6 +137,7 @@ def main():
     with open("day14.txt", "r", encoding="utf8") as file:
         data = file.read()
     print("Day 14a", day14a(data, visualise=True))
+    # print("Day 14b", day14b(data, visualise=True))
 
 
 if __name__ == "__main__":
