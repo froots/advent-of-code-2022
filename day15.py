@@ -106,9 +106,36 @@ def test_reduce_ranges():
     assert reduce_ranges([(2, 3), (5, 6), (8, 9)]) == [(2, 3), (5, 6), (8, 9)]
 
 
+def visualise(data):
+    sensor_data = parse(data)
+    sensors = set((x, y) for (x, y), _, _ in sensor_data)
+    beacons = set((x, y) for _, (x, y), _ in sensor_data)
+
+    for y in range(21):
+        ranges = [row_range(sensor, y) for sensor in sensor_data]
+        ranges = reduce_ranges([r for r in ranges if r is not None])
+        row = ""
+        for x in range(21):
+            current = ""
+            if (x, y) in sensors:
+                current = "S"
+            elif (x, y) in beacons:
+                current = "B"
+            else:
+                for r in ranges:
+                    if x in range(r[0], r[1] + 1):
+                        current = "#"
+                        break
+            if not current:
+                current = "."
+            row += current
+        print(row)
+
+
 def main():
     with open("day15.txt", "r", encoding="utf8") as file:
         data = file.read()
+    # print("Visualise", visualise(example))
     print("Day15a", day15a(data, 2000000))
 
 
