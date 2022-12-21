@@ -72,7 +72,7 @@ def reduce_ranges(ranges):
 def day15a(data, y):
     sensors = parse(data)
     ranges = [row_range(sensor, y) for sensor in sensors]
-    ranges = reduce_ranges([range for range in ranges if range is not None])
+    ranges = reduce_ranges([r for r in ranges if r is not None])
 
     range_total = sum(end - start + 1 for start, end in ranges)
     beacons_in_row = sum(by == y for _, by in set(beacon for _, beacon, _ in sensors))
@@ -80,8 +80,31 @@ def day15a(data, y):
     return range_total - beacons_in_row
 
 
+def day15b(data, max_size=4000000):
+    sensors = parse(data)
+    # naive brute force row by row attempt
+    # calculate ranges for each row
+    # filter row where there is > 1 range?
+    # Only one row should have two non-contiguous ranges
+    candidate = None
+    for y in range(max_size):
+        if y % 10000 == 0:
+            print(f"Row {y}")
+        ranges = [row_range(sensor, y) for sensor in sensors]
+        ranges = reduce_ranges([r for r in ranges if r is not None])
+        if len(ranges) > 1:
+            candidate = (ranges[0][1] + 1, y)
+            break
+
+    return candidate[0] * 4000000 + candidate[1]
+
+
 def test_day15a():
     assert day15a(example, 10) == 26
+
+
+def test_day15b():
+    assert day15b(example, 20) == 56000011
 
 
 def test_parse_data():
@@ -137,6 +160,7 @@ def main():
         data = file.read()
     # print("Visualise", visualise(example))
     print("Day15a", day15a(data, 2000000))
+    print("Day15b", day15b(data))
 
 
 if __name__ == "__main__":
