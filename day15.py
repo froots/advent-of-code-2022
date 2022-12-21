@@ -88,8 +88,6 @@ def day15b(data, max_size=4000000):
     # Only one row should have two non-contiguous ranges
     candidate = None
     for y in range(max_size):
-        if y % 10000 == 0:
-            print(f"Row {y}")
         ranges = [row_range(sensor, y) for sensor in sensors]
         ranges = reduce_ranges([r for r in ranges if r is not None])
         if len(ranges) > 1:
