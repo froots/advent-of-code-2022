@@ -44,20 +44,40 @@ def row_range(sensor, y):
 
 
 def reduce_ranges(ranges):
-    return ranges
+    if len(ranges) < 2:
+        return ranges
+
+    ranges.sort(key=lambda range: range[0])
+    final = []
+
+    while True:
+        if len(ranges) < 2:
+            final += ranges
+            break
+
+        (s1, e1), (s2, e2), *rest = ranges
+
+        # Non-contiguous
+        if s2 - e1 > 1:
+            final.append((s1, e1))
+            ranges = [(s2, e2)] + rest
+            continue
+
+        # contiguous
+        ranges = [(min(s1, s2), max(e1, e2))] + rest
+
+    return final
 
 
 def day15a(data, y):
     sensors = parse(data)
-
     ranges = [row_range(sensor, y) for sensor in sensors]
-    ranges = [range for range in ranges if range is not None]
+    ranges = reduce_ranges([range for range in ranges if range is not None])
 
-    print(ranges)
+    range_total = sum(end - start + 1 for start, end in ranges)
+    beacons_in_row = sum(by == y for _, by in set(beacon for _, beacon, _ in sensors))
 
-    # Merge ranges
-    # Calculate total length of all ranges
-    # Remove any beacons in the selected row from the count
+    return range_total - beacons_in_row
 
 
 def test_day15a():
@@ -77,4 +97,20 @@ def test_row_range():
 
 
 def test_reduce_ranges():
-    assert reduce_ranges([(2, 15)]) == [(2, 15)]
+    assert reduce_ranges([(2, 9)]) == [(2, 9)]
+    assert reduce_ranges([(2, 5), (7, 9)]) == [(2, 5), (7, 9)]
+    assert reduce_ranges([(2, 9), (3, 5)]) == [(2, 9)]
+    assert reduce_ranges([(6, 9), (2, 5)]) == [(2, 9)]
+    assert reduce_ranges([(2, 5), (3, 9)]) == [(2, 9)]
+    assert reduce_ranges([(2, 4), (6, 9), (3, 8)]) == [(2, 9)]
+    assert reduce_ranges([(2, 3), (5, 6), (8, 9)]) == [(2, 3), (5, 6), (8, 9)]
+
+
+def main():
+    with open("day15.txt", "r", encoding="utf8") as file:
+        data = file.read()
+    print("Day15a", day15a(data, 2000000))
+
+
+if __name__ == "__main__":
+    main()
